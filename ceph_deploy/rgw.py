@@ -152,7 +152,6 @@ def rgw_create(args):
     errors = 0
     for hostname, name in args.rgw:
         try:
-            name = validate.alphanumeric(name)
             distro = hosts.get(hostname, username=args.username)
             rlogger = distro.conn.logger
             LOG.info(
@@ -210,8 +209,12 @@ def colon_separated(s):
     name = s
     if s.count(':') == 1:
         (host, name) = s.split(':')
-    name = 'rgw.' + name
-    return (host, name)
+    try:
+        name = validate.alphanumeric(name)
+        name = 'rgw.' + name
+        return (host, name)
+    except ArgumentTypeError as e:
+        LOG.error(e)
 
 
 @priority(30)
