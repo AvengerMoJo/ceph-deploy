@@ -9,6 +9,7 @@ from ceph_deploy import hosts
 from ceph_deploy.util import system
 from ceph_deploy.lib import remoto
 from ceph_deploy.cliutil import priority
+from ceph_deploy import validate
 
 
 LOG = logging.getLogger(__name__)
@@ -151,6 +152,7 @@ def rgw_create(args):
     errors = 0
     for hostname, name in args.rgw:
         try:
+            name = validate.alphanumeric(name)
             distro = hosts.get(hostname, username=args.username)
             rlogger = distro.conn.logger
             LOG.info(
